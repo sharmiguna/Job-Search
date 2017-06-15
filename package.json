@@ -15,5 +15,8 @@
     "mongodb": "*",
     "mongoose": "*",
     "mongoose-gridfs": "*"
+  },
+  "scripts": {
+    "start": "node nodeJobsearch.js"
   }
 }
