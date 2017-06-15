@@ -76,17 +76,14 @@
 					<tr ng-repeat="job in jobs | orderBy:orderByField:reverseSort | filter:searchBy" >
 						<td> <button class="w3-btn w3-ripple" ng-click="editJob(job._id)"> &#9998; Edit </button> </td>		  
 
-						<td> {{ emp._id }} </td>
-	          			<td width="5%">
-	          				<img ng-hide=!emp.photo src=" {{emp.photo}}" width="100%" height="55px"/>
-	          			</td>
+						<td> {{ job._id }} </td>
 						<td> {{ job.Position }} </td>
 					    <td> {{ job.Company}} </td>
 					    <td> {{ job.Technology}} </td>
 						<td> {{ job.Requirements }} </td>
 					    <td> {{ job.Level }} </td> 
-					    <td> {{emp.Location}} </td>
-					    <td> <button class="w3-btn w3-ripple" ng-click="deleteEmp(job._id)"> &#x78; Delete </button> </td>
+					    <td> {{ job.Location }} </td>
+					    <td> <button class="w3-btn w3-ripple" ng-click="deleteJob(job._id)"> &#x78; Delete </button> </td>
 					    </td>
 					</tr>
 				</div>
@@ -141,7 +138,7 @@ app.controller("jobCtrl", function($scope,jobFactory,$http) {
 			});
 	};
 
-	$scope.deleteUser = function(id) {
+	$scope.deleteJob = function(id) {
     console.log('entered deleteuser function with id: ', id);
     console.log(typeof(id), id);
 		var url = '/usershome/users/'+ id;
