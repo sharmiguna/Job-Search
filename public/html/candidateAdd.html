@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script type="text/javascript" src="/ng-file-upload.min.js"></script>
+<script type="text/javascript" src="/ng-file-upload-shim.min.js"></script>
+<head>
+  <title>Create candidate page</title>
+</head>
+<body ng-app='myApp'>
+  <div ng-controller = 'userCtrl'>
+     <h3 >Create New User:</h3>
+    <label>First Name:*</label>
+    <input type="text" ng-model="fName" placeholder="First Name">
+  <br>
+    <label>Last Name:*</label>
+    <input type="text" ng-model="lName" placeholder="Last Name">
+  <br>
+    <label>Experience:*</label>
+    <input type="text" ng-model="experience" placeholder="Experience">
+  <br>
+    <label>Tecnologies:</label>
+    <input type="text" ng-model="technologies" placeholder="Tecnologies">
+  <br>
+  <label>Age:</label>
+    <input type="text" ng-model="age" placeholder="Age">
+  <br>
+  <label>Sex:</label>
+    <div class="w3-input w3-border" type="radio" >
+    <input type="radio" ng-model="sex" value="M" checked> Male<br>
+    <input type="radio" ng-model="sex" value="F"> Female<br>
+    </div>
+  <br>
+  <label>Resume*</label>  
+    <div class="input-group">
+        <input 
+         type="file" 
+         ngf-select 
+         ng-model="userResume" 
+         name="resume" 
+         ngf-pattern=" '.pdf, .doc, .docx' " 
+         accept=" '.pdf, .doc, .docx' "
+         ngf-max-size="20MB" 
+         /><br>
+         <input type="button" name="upload" ng-click='uploadResume()' value="upload" style="width: 30%; height:34px; color: black; float: right"></input>
+         <label ng-model="userResumeID"> {{userResumeID}}</label>
+     </div>
+  <button ng-disabled="error || incomplete" ng-click="create()">&#10004; Add User</button>
+  </div>
+
+<script type="text/javascript">
+
+var app = angular.module("myApp",['ngFileUpload']);
+
+  app.controller("userCtrl", function($scope, $http, Upload, $window) {
+  $scope.error = false;
+  $scope.incomplete = true;
+  $scope.sex ='';
+  $scope.experience='';
+  $scope.age='';
+  $scope.firstName = '';
+  $scope.lastName = '';
+  $scope.technologies = '';
+
+    $scope.uploadResume = function () {
+        console.log($scope.userResume);
+        Upload.upload({
+            url: 'resume/upload', 
+            data: {
+              file: $scope.userResume,
+              name: ''
+            } 
+        }).then(function (res) { 
+            if(res.data){ 
+              console.log("the data is" + res.data);
+                $scope.userResumeID = res.data;
+                alert('your resume id is :'+$scope.userResumeID);
+            } else {
+                alert('an error occured');
+            }
+
+        }, function (res) { 
+            console.log('Error status: ' + res.status);
+          });
+    };
+ 
+   $scope.test = function() {
+    console.log("inside test function");
+
+      if (!$scope.firstName || !$scope.experience  || !$scope.age || !$scope.sex || !$scope.userResumeID) {
+         $scope.incomplete = true;
+      } else {
+        $scope.incomplete = false;
+      }
+   
+      if (isNaN($scope.age) || isNaN($scope.experience)) {
+        $scope.error = true;
+      } else {
+        $scope.error = false;
+      }
+    console.log("error=" + $scope.error);
+    console.log("incomplete=" + $scope.incomplete);
+    };
+
+  $scope.$watch('fName', function(val) { $scope.test() });
+  $scope.$watch('userResumeID', function(val) { $scope.test() });
+  $scope.$watch('age', function(val) { $scope.test() });
+  $scope.$watch('experience', function(val) { $scope.test() });
+
+
+    $scope.save = function() {
+      var request = $http.post('/candidate', {
+        'FirstName': $scope.fName,
+        'LastName': $scope.lName,
+        'Experience': parseInt($scope.experience),
+        'Tecnologies': $scope.technologies,
+        'age': parseInt($scope.age),
+        'sex': $scope.sex,
+        'resume' : $scope.userResumeID  
+      }).then(function(response) {
+        if(response) 
+          alert("success submission of candidate. Resume id is "+ $scope.userResumeID);
+          window.location.href='/jobhunt';
+      });
+  };
+
+});
+
+</script>
+</body>
+</html>

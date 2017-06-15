@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<head>
+  <title>Create job page</title>
+</head>
+<body ng-app='myApp'>
+  <div ng-controller = 'createjobCtrl'>
+    <form>
+      <h3 >Create New Job:</h3>
+        <label>Positon:*</label>
+        <input  type="text" ng-model="position" placeholder="designation" required="true">
+      <br>
+        <label>Company:*</label>
+        <input type="text" ng-model="company" placeholder="company name LTD" required="true">
+      <br>
+        <label>Technology:*</label>
+        <input  type="text" ng-model="technology" placeholder="technologies" required="true">
+      <br>
+        <label>Requirements:</label>
+        <input  type="text" ng-model="requirements" placeholder="roles">
+      <br>
+      <label>Level:</label>
+        <input  type="text" ng-model="level" placeholder="associate/ entrylevel/ senior">
+      <br>
+      <label>Location:*</label>
+        <input  type="text" ng-model="location" placeholder="Location" required="true">
+      <br>
+      <button ng-disabled=" incomplete" ng-click="create()">&#10004; Add Job</button>
+    </form>
+  </div>
+
+<script type="text/javascript">
+var app = angular.module("myApp", []);
+  app.controller('createjobCtrl', function($scope, $http) {
+    $scope.incomplete = true;
+    $scope.position = '';
+    $scope.company = ''; 
+    $scope.technology = '';
+    $scope.requirements = '';
+    $scope.level='';
+    $scope.location='';
+      $scope.test = function() {
+        if (!$scope.position || !$scope.company || !$scope.technology || !$scope.location ) {
+           $scope.incomplete = true;
+        } else {
+          $scope.incomplete = false;
+        }
+
+        console.log("incomplete=" + $scope.incomplete);
+      };
+
+  $scope.$watch('position', function(val) { $scope.test() });
+  $scope.$watch('company', function(val) { $scope.test() });
+  $scope.$watch('technology', function(val) { $scope.test() });
+  $scope.$watch('location', function(val) { $scope.test() });
+
+  $scope.create = function()
+  {
+    var request = $http.post("/jobhunt/jobsadd", {
+      'Positon': $scope.position,
+      'Company': $scope.company,
+      'Technology': $scope.technology,
+      'Requirements': $scope.requirements,
+      'Level': $scope.level,
+      'Location': $scope.location
+    }).then(function(response) {
+       alert(response.data);
+       if(response)
+        window.location.href="/jobhunt";
+    });
+  };
+
+});
+
+</script>
+</body>
+</html>

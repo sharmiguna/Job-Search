@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<head>
+  <title>Create job page</title>
+</head>
+<body ng-app='myApp'>
+  <div ng-controller = 'editjobCtrl'>
+    <form>
+      <h3 >Edit Job: for id <%= ID %></h3>
+        <label>Positon:*</label>
+        <input  type="text" ng-model="position" value="<%= Positon %>" ng-disabled="true">
+      <br>
+        <label>Company:*</label>
+        <input type="text" ng-model="company" value="<%= Company %>" ng-disabled="true">
+      <br>
+        <label>Technology:*</label>
+        <input  type="text" ng-model="technology" value="<%= Technology %>" >
+      <br>
+        <label>Requirements:</label>
+        <input  type="text" ng-model="requirements" value="<%= Requirements %>">
+      <br>
+      <label>Level:</label>
+        <input  type="text" ng-model="level" value="<%= Level %>">
+      <br>
+      <label>Location:*</label>
+        <input  type="text" ng-model="location" value="<%= Location %>" >
+      <br>
+      <button ng-click="create()">&#10004; Add Job</button>
+    </form>
+  </div>
+
+<script type="text/javascript">
+var app = angular.module("myApp", []);
+  app.controller('editjobCtrl', function($scope, $http) {
+  $scope.create = function()
+  {
+    var url = "/jobhunt/jobsadd" + <%= ID %> ;
+    console.log("the url for edit is" + url); 
+    var request = $http.put(url, {
+      'Technology': $scope.technology,
+      'Requirements': $scope.requirements,
+      'Level': $scope.level,
+      'Location': $scope.location
+    }).then(function(response) {
+       alert(response.data);
+       if(response)
+        window.location.href="/jobhunt";
+    });
+  };
+
+});
+
+</script>
+</body>
+</html>

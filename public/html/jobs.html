@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<head>
+	<title>job hunt</title>
+	<style>
+	table {
+	    border-collapse: collapse;
+	    width: 100%;
+	}
+
+	th, td {
+	    text-align: left;
+	    padding: 8px;
+	}
+
+	tr:nth-child(even){background-color: #f2f2f2}
+
+	th {
+	    background-color: #4CAF50;
+	    color: white;
+	}
+	</style>
+
+</head>
+
+<body ng-app="myApp">
+	<div ng-model='showingpage'>
+		<div ng-controller = "jobCtrl">
+
+			<h1>Jobs</h1>
+			<span style="float: left">
+				<input type="text" ng-model="searchBy" name="srch" />
+				<label for="srch">Search</label>
+			</span>
+			<span style="float: right;">
+				<a href="jobhunt/jobsadd"><input type="button" ng-click="create()" value="Add New Job" /> &#9998;</a>
+			</span>
+			<br>
+			<table style="font-size: 14px; margin-top: 4%; padding-bottom: 100px;">
+				<tr>
+					<th> <a> Edit </a></th>
+					<th><a href="#" ng-click="orderByField='ID'; reverseSort=!reverseSort"> ID 
+						<span ng-show="orderByField == 'ID'">
+							<span ng-show = "!reverseSort">	</span>
+							<span ng-show = "reverseSort"> </span> 
+						</span></a>
+					</th>
+					<th><a href="#" ng-click="orderByField='Position'; reverseSort=!reverseSort"> Position 
+						<span ng-show="orderByField == 'Position'">
+							<span ng-show = "!reverseSort">	</span>
+							<span ng-show = "reverseSort"> </span> 
+						</span></a>
+					</th>					
+					<th><a href="#" ng-click="orderByField='Company'; reverseSort=!reverseSort"> Company
+						<span ng-show="orderByField == 'Company'">
+							<span ng-show = "!reverseSort">	</span>
+							<span ng-show = "reverseSort"> </span> 
+						</span></a>
+					</th>
+					<th>Technology</th>					
+					<th>Requirements</th>					
+					<th>Level</th>
+
+					<th><a href="#" ng-click="orderByField='Location'; reverseSort=!reverseSort"> Location 
+						<span ng-show="orderByField == 'Location'">
+							<span ng-show = "!reverseSort">	</span>
+							<span ng-show = "reverseSort"> </span> 
+						</span></a>
+					</th>
+					<th> <a>Delete</a> </th>
+				</tr>
+
+				<div >
+					<tr ng-repeat="job in jobs | orderBy:orderByField:reverseSort | filter:searchBy" >
+						<td> <button class="w3-btn w3-ripple" ng-click="editJob(job._id)"> &#9998; Edit </button> </td>		  
+
+						<td> {{ emp._id }} </td>
+	          			<td width="5%">
+	          				<img ng-hide=!emp.photo src=" {{emp.photo}}" width="100%" height="55px"/>
+	          			</td>
+						<td> {{ job.Position }} </td>
+					    <td> {{ job.Company}} </td>
+					    <td> {{ job.Technology}} </td>
+						<td> {{ job.Requirements }} </td>
+					    <td> {{ job.Level }} </td> 
+					    <td> {{emp.Location}} </td>
+					    <td> <button class="w3-btn w3-ripple" ng-click="deleteEmp(job._id)"> &#x78; Delete </button> </td>
+					    </td>
+					</tr>
+				</div>
+			</table>
+			
+			<hr>
+			<div style="padding: 50px">
+				<a href="/candidate" style="font-size: 16px; color: blue; font-weight: bold; float: right;"> <u> Upload a candidate</u> </a>
+			</div>
+			<div>
+				<label for="ResumeID"> Enter the ResumeID </label> 
+				<input type="text" name="ResumeID" ng-model="ResumeID" style="color: black"><br> 
+				<input type="button" name="submit" value="submit" ng-click="candidateSearch(ResumeID)" style="color: black">
+			</div><br><br>	
+			<hr>
+		</div>
+	</div>
+
+
+<script type="text/javascript">
+var app = angular.module("myApp", []);
+
+app.factory('jobFactory', ['$http', function($http) {
+	return {
+		getJobs: function() {
+			return $http.get("jobhunt/jobs");
+		}
+	}
+}]);
+
+
+app.controller("jobCtrl", function($scope,jobFactory,$http) {
+
+   	jobFactory.getJobs().success(function(data) {
+   		$scope.jobs = data;
+	});
+
+   	$scope.candidateSearch = function(id) {
+   		var urlResume = 'resume/download/' +id;
+   		var request = $http.get(urlResume)
+   			.then(function(response) {
+   				alert(response.data);
+   			})
+   	};
+
+	$scope.editJob = function(id) {
+		var url = '/jobhunt/jobs/' + id;
+		alert("user id to be edited is" + id + typeof(id));
+		var request = $http.put(url)
+			.then(function(response){
+				alert(response.data);
+			});
+	};
+
+	$scope.deleteUser = function(id) {
+    console.log('entered deleteuser function with id: ', id);
+    console.log(typeof(id), id);
+		var url = '/usershome/users/'+ id;
+    console.log('calling:  http.delete(' +url+ ')');
+		var request = $http.delete(url)
+	    .then(function(response) {
+        	alert(response.data);	        
+	        for(var i=0; i< $scope.jobs.length ; i++)
+	        {
+	        	if(id == $scope.jobs[i]._id)
+	  		    {
+  					$scope.jobs.splice(i, 1);
+  					console.log("done deleting" + id);
+	  			    break;
+	  			}
+	        }
+	    });
+	}    
+});
+
+</script>
+</body>
+</html>
