@@ -5,4 +5,4 @@ mean stack app for job portal
 
 1. npm install // to install all the required node modules
 2. npm start // to start the node app
-3. open http://localhost/jobhunt.html in your browser
+3. open http://localhost/jobhunt in your browser
